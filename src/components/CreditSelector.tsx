@@ -23,10 +23,10 @@ export const CreditChoice = ({ quantity }: CreditChoiceProps) => {
 export const CreditSelector = () => {
   const quantities = [0.1, 0.2, 0.5, 1.0, 2.0, 5.0];
   return (
-    <Grid container columns={{ xs: 4, sm: 8, md: 12 }}>
+    <Grid container spacing={2}>
       {quantities.map((quantity) => {
         return (
-          <Grid item xs={2} key={quantity}>
+          <Grid item xs={6} key={quantity}>
             <CreditChoice quantity={quantity} />
           </Grid>
         );
