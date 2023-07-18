@@ -1,12 +1,7 @@
-import { UUID } from "crypto"
-
 interface UserProps {
-    id: UUID;
-    fullName: string;
+  name: string;
 }
 
-export const UserInfo = ({id, fullName}: UserProps) => {
-    return (
-        <span>{fullName}</span>
-    );
-}
+export const UserInfo = ({ name }: UserProps) => {
+  return <span>{name}</span>;
+};

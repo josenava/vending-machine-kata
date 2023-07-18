@@ -1,46 +1,81 @@
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import { Card, CardActions, CardContent, Grid, Stack, Typography } from '@mui/material';
+import Button from "@mui/material/Button";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  Grid,
+  Typography,
+} from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { IProduct } from "../types";
+import { api } from "../api";
+import { useState } from "react";
+import { setBalance } from "../slices/UserSlice";
 
+export const Product = ({
+  id,
+  name,
+  price,
+  quantity,
+  description,
+  slot_id,
+}: IProduct) => {
+  const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+  const [quantityUpdated, setQuantityUpdated] = useState<number>(quantity);
+  const handleBuy = async () => {
+    const updatedUser = await api.orderProduct(user.id, slot_id);
+    dispatch(setBalance(updatedUser.balance));
+    setQuantityUpdated(quantity - 1);
+  };
 
-interface ProductProps {
-	title: string;
-	price: number;
-    stock: number;
-    description?: string;
-}
+  return (
+    <Grid item xs={2} key={id}>
+      <Card variant="outlined">
+        <CardContent>
+          <Typography sx={{ fontSize: 14 }}>{name}</Typography>
+          {description && (
+            <Typography sx={{ fontSize: 10 }}>
+              description: {description}
+            </Typography>
+          )}
+          <Typography sx={{ fontSize: 14 }}>
+            stock: {quantityUpdated}
+          </Typography>
+          <Typography sx={{ fontSize: 14 }}>{price}€</Typography>
+        </CardContent>
+        <CardActions>
+          <Button
+            disabled={Number(price) > user.balance || quantityUpdated === 0}
+            onClick={handleBuy}
+          >
+            Buy
+          </Button>
+        </CardActions>
+      </Card>
+    </Grid>
+  );
+};
 
-export const Product = ({ title, price, stock, description }: ProductProps) => {
-	return (
-        <Card>
-            <CardContent>
-                <Typography sx={{ fontSize: 14 }}>
-                    {title}
-                </Typography>
-                <Typography sx={{ fontSize: 14 }}>
-                    stock: {stock}
-                </Typography>
-                <Typography sx={{ fontSize: 14 }}>
-                    {price}€
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button>Buy</Button>
-            </CardActions>
-        </Card>
-	);
-}
-
-export const Products = () => {
-	return (
-		<Stack direction="row" spacing={2}>
-			<Product title='Redbull' price={5} stock={10} description='Very dangerous drink' />
-			<Product title='Fanta' price={3} stock={1} />
-			<Product title='Random' price={3} stock={1} />
-			<Product title='Coffee' price={3} stock={1} />
-			<Product title='Water' price={3} stock={1} />
-			<Product title='Beer' price={3} stock={1} />
-			<Product title='Sparkling water' price={3} stock={1} />
-		</Stack>
-	);
-}
+export const Products = ({ products }: { products: IProduct[][] }) => {
+  return (
+    <>
+      {products.map((productsRow: IProduct[], index) => (
+        <Grid container key={index}>
+          {productsRow.map((product: IProduct) => (
+            <Product
+              id={product.id}
+              name={product.name}
+              price={product.price}
+              quantity={product.quantity}
+              description={product.description}
+              slot_id={product.slot_id}
+              key={product.id}
+            />
+          ))}
+        </Grid>
+      ))}
+    </>
+  );
+};
