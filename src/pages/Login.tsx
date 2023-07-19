@@ -10,7 +10,7 @@ export const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleButtonClick = async () => {
-    const loggedInUser = await api.login(userName);
+    const { data: loggedInUser } = await api.login(userName);
     if (loggedInUser.id && loggedInUser.name) {
       dispatch(startSession(loggedInUser));
       navigate("/vending-machine");

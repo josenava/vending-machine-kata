@@ -14,16 +14,16 @@ import { useNavigate } from "react-router";
 export const VendingMachine = () => {
   const user = useSelector((state: RootState) => state.user);
   const navigate = useNavigate();
-  if (!user.id) {
-    navigate("/");
-  }
   const [products, setProducts] = useState<IProduct[][]>([]);
 
   useEffect(() => {
-    api.getProducts().then((res) => {
-      setProducts(res);
+    if (!user.id) {
+      navigate("/");
+    }
+    api.getProducts().then(({ data }) => {
+      setProducts(data);
     });
-  }, []);
+  }, [user.id, navigate]);
 
   return (
     <Grid container spacing={2}>
@@ -32,9 +32,9 @@ export const VendingMachine = () => {
       </Grid>
       <Grid item xs={4}>
         <UserInfo name={user.name} />
-        <CreditSelector />
+        <CreditSelector user={user} />
         <BalanceDisplay quantity={user.balance} />
-        <Refund />
+        <Refund user={user} />
       </Grid>
     </Grid>
   );

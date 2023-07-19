@@ -1,13 +1,14 @@
 import { Button } from "@mui/material";
 import { api } from "../api";
-import { setBalance } from "../slices/UserSlice";
+import { endSession } from "../slices/UserSlice";
 import { useDispatch } from "react-redux";
+import { User } from "../types";
 
-export const Refund = () => {
+export const Refund = ({ user }: { user: User }) => {
   const dispatch = useDispatch();
   const handleClick = async () => {
-    const user = await api.refund();
-    dispatch(setBalance(user.balance));
+    await api.refund(user.id);
+    dispatch(endSession());
   };
   return (
     <Button variant="contained" onClick={handleClick}>

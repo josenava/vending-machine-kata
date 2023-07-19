@@ -25,7 +25,7 @@ export const Product = ({
   const dispatch = useDispatch();
   const [quantityUpdated, setQuantityUpdated] = useState<number>(quantity);
   const handleBuy = async () => {
-    const updatedUser = await api.orderProduct(user.id, slot_id);
+    const { data: updatedUser } = await api.orderProduct(user.id, slot_id);
     dispatch(setBalance(updatedUser.balance));
     setQuantityUpdated(quantity - 1);
   };

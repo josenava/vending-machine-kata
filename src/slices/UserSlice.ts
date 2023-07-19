@@ -17,7 +17,10 @@ export const userSlice = createSlice({
       state.balance = action.payload.balance;
     },
     endSession: (state) => {
-      state = initialState;
+      return initialState;
+      // state.id = initialState.id;
+      // state.name = initialState.name;
+      // state.balance = initialState.balance;
     },
     setBalance: (state, action: PayloadAction<number>) => {
       state.balance = action.payload;
