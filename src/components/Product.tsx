@@ -27,7 +27,7 @@ export const Product = ({
   const handleBuy = async () => {
     const { data: updatedUser } = await api.orderProduct(user.id, slot_id);
     dispatch(setBalance(updatedUser.balance));
-    setQuantityUpdated(quantity - 1);
+    setQuantityUpdated(quantityUpdated - 1);
   };
 
   return (

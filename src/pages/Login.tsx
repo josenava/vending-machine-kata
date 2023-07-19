@@ -1,37 +1,46 @@
-import { Button, TextField } from "@mui/material";
+import { Button, FormGroup, TextField } from "@mui/material";
 import { useNavigate } from "react-router";
 import { api } from "../api";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { startSession } from "../slices/UserSlice";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+interface FormValues {
+  name: string;
+}
 
 export const LoginPage = () => {
-  const [userName, setUserName] = useState("");
+  const { handleSubmit, register, formState } = useForm<FormValues>();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleButtonClick = async () => {
-    const { data: loggedInUser } = await api.login(userName);
+  const _onSubmit: SubmitHandler<FormValues> = async (formData) => {
+    const { data: loggedInUser } = await api.login(formData.name);
     if (loggedInUser.id && loggedInUser.name) {
       dispatch(startSession(loggedInUser));
       navigate("/vending-machine");
     }
   };
-  const handleTextInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserName(event.target.value);
-  };
-
   return (
-    <div>
-      <h1>Login</h1>
-      <TextField
-        id="filled-basic"
-        label="Full name"
-        variant="filled"
-        onChange={handleTextInput}
-      />
-      <Button variant="contained" onClick={handleButtonClick}>
-        Visit the vending machine
-      </Button>
-    </div>
+    <form onSubmit={handleSubmit(_onSubmit)}>
+      <FormGroup sx={{ p: 3 }}>
+        <TextField
+          label="Name"
+          variant="outlined"
+          required
+          margin="dense"
+          inputProps={{ ...register("name", { required: "true" }) }}
+          error={Boolean(formState.errors?.name)}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+          type="submit"
+        >
+          Submit
+        </Button>
+      </FormGroup>
+    </form>
   );
 };
